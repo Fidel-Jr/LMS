@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="15.0.1" />
     <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
@@ -32,17 +33,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lms.Domain\Lms.Domain.csproj" />
-    <ProjectReference Include="..\Lms.Infrastructure\Lms.Infrastructure.csproj" />
+    <Folder Include="Areas\Student\Data\" />
+    <Folder Include="Areas\Teacher\Data\" />
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Student\Data\" />
-    <Folder Include="Areas\Student\Models\" />
-    <Folder Include="Areas\Teacher\Data\" />
-    <Folder Include="Areas\Teacher\Models\" />
-    <Folder Include="Areas\Admin\Data\" />
-    <Folder Include="Areas\Admin\Models\" />
+    <None Include="Areas\Teacher\Controllers\MaterialController.cs" />
   </ItemGroup>
 
 </Project>

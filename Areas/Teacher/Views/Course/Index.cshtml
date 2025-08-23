@@ -1,0 +1,87 @@
+﻿@model LmsProject.Areas.Teacher.Models.CourseModuleMaterial
+@{
+    ViewData["Title"] = Model.Course.Title;
+}
+
+<h2>@Model.Course.Title</h2>
+<div class="py-4 shadow p-4" style="border-radius: 5px;">
+
+    <div class="accordion" id="lessonAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingGeneral">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGeneral" aria-expanded="true" aria-controls="collapseGeneral">
+                    General
+                </button>
+            </h2>
+            <div id="collapseGeneral" class="accordion-collapse collapse show" aria-labelledby="headingGeneral" data-bs-parent="#lessonAccordion">
+                <div class="accordion-body">
+                    <a asp-action="Create" asp-controller="Material" asp-route-id="@Model.Course.Id" class="btn btn-primary mt-3">+ New Material</a>
+                </div>  
+            </div>
+        </div>
+
+        @if (Model.Modules != null && Model.Modules.Any())
+        {
+            var index = 1;
+            foreach (var module in Model.Modules)
+            {
+                var headingId = $"headingLesson{index}";
+                var collapseId = $"collapseLesson{index}";
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="@headingId">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseId" aria-expanded="false" aria-controls="@collapseId">
+                                @module.Title
+                            </button>
+                        </h2>
+                        <div id="@collapseId" class="accordion-collapse collapse" aria-labelledby="@headingId" data-bs-parent="#lessonAccordion">
+                            <div class="accordion-body">
+                                @* <div class="accordion" id="materialAccordion-@index">
+                                    <!-- Example Material -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingMaterial-@index-1">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMaterial-@index-1" aria-expanded="false" aria-controls="collapseMaterial-@index-1">
+                                                Learning Material 1.1: What is Programming?
+                                            </button>
+                                        </h2>
+                                        <div id="collapseMaterial-@index-1" class="accordion-collapse collapse" aria-labelledby="headingMaterial-@index-1" data-bs-parent="#materialAccordion-@index">
+                                            <div class="accordion-body">
+                                                <p><strong>Content:</strong> Programming is the process of creating instructions for a computer to perform tasks...</p>
+                                                <a href="/files/lesson1-material1.pdf" download class="btn btn-sm btn-primary mt-2">
+                                                    📥 Download PDF
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a asp-action="Create" asp-controller="Material" asp-route-id="@module.Id" class="btn btn-primary mt-3">+ New Material</a>
+                                </div> *@
+                            </div>
+                        </div>
+                    </div>
+
+                index++;
+            }
+        }
+        <a asp-action="Create" asp-controller="Module" asp-route-id="@Model.Course.Id" class="btn btn-primary mt-3">+ Add New Lesson</a>
+
+</div>
+
+@if (Model.EnrollmentRequest != null)
+{
+        <div class="mt-5">
+            @foreach (var request in Model.EnrollmentRequest)
+            {
+                <div class="d-flex justify-content-lg-between align-items-center mb-3">
+                    <div class="d-flex align-items-center">
+                        <div style="border: 1px solid black; border-radius: 50%; width: 50px; height: 50px;"></div>
+                        <div class="ms-3">
+                            <h5 class="mb-0">@request.Student.User.FirstName</h5>
+                        </div>
+                    </div>
+                    <div>
+                        <a class="btn btn-success me-2" asp-area="Teacher" asp-controller="Course" asp-action="AcceptEnrollment" asp-route-id="@request.Id">Accept</a>
+                    </div>
+                </div>
+            }
+        </div>
+}

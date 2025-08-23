@@ -3,6 +3,7 @@ using System;
 using LmsProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LmsProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250811105409_AddStudentTeacherModel")]
+    partial class AddStudentTeacherModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,112 +24,6 @@ namespace LmsProject.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("LmsProject.Models.Course", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<int>("EnrollmentCount")
-                        .HasColumnType("integer")
-                        .HasColumnName("enrollment_count");
-
-                    b.Property<int>("TeacherId")
-                        .HasColumnType("integer")
-                        .HasColumnName("teacher_id");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("title");
-
-                    b.HasKey("Id")
-                        .HasName("pk_courses");
-
-                    b.HasIndex("TeacherId")
-                        .HasDatabaseName("ix_courses_teacher_id");
-
-                    b.ToTable("courses", (string)null);
-                });
-
-            modelBuilder.Entity("LmsProject.Models.EnrollmentRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("integer")
-                        .HasColumnName("course_id");
-
-                    b.Property<DateTime>("RequestDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("request_date");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("integer")
-                        .HasColumnName("student_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_enrollment_requests");
-
-                    b.HasIndex("CourseId")
-                        .HasDatabaseName("ix_enrollment_requests_course_id");
-
-                    b.HasIndex("StudentId")
-                        .HasDatabaseName("ix_enrollment_requests_student_id");
-
-                    b.ToTable("enrollment_requests", (string)null);
-                });
-
-            modelBuilder.Entity("LmsProject.Models.Module", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("integer")
-                        .HasColumnName("course_id");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("title");
-
-                    b.HasKey("Id")
-                        .HasName("pk_modules");
-
-                    b.HasIndex("CourseId")
-                        .HasDatabaseName("ix_modules_course_id");
-
-                    b.ToTable("modules", (string)null);
-                });
 
             modelBuilder.Entity("LmsProject.Models.Student", b =>
                 {
@@ -166,29 +63,6 @@ namespace LmsProject.Migrations
                             Id = 3,
                             UserId = "180aae21-8b04-4495-9927-67c83639fcc9"
                         });
-                });
-
-            modelBuilder.Entity("LmsProject.Models.StudentCourse", b =>
-                {
-                    b.Property<int>("StudentId")
-                        .HasColumnType("integer")
-                        .HasColumnName("student_id");
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("integer")
-                        .HasColumnName("course_id");
-
-                    b.Property<DateTime>("EnrollmentDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("enrollment_date");
-
-                    b.HasKey("StudentId", "CourseId")
-                        .HasName("pk_student_courses");
-
-                    b.HasIndex("CourseId")
-                        .HasDatabaseName("ix_student_courses_course_id");
-
-                    b.ToTable("student_courses", (string)null);
                 });
 
             modelBuilder.Entity("LmsProject.Models.Teacher", b =>
@@ -522,51 +396,6 @@ namespace LmsProject.Migrations
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
-            modelBuilder.Entity("LmsProject.Models.Course", b =>
-                {
-                    b.HasOne("LmsProject.Models.Teacher", "Teacher")
-                        .WithMany()
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_courses_teachers_teacher_id");
-
-                    b.Navigation("Teacher");
-                });
-
-            modelBuilder.Entity("LmsProject.Models.EnrollmentRequest", b =>
-                {
-                    b.HasOne("LmsProject.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_enrollment_requests_courses_course_id");
-
-                    b.HasOne("LmsProject.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_enrollment_requests_students_student_id");
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("LmsProject.Models.Module", b =>
-                {
-                    b.HasOne("LmsProject.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_modules_courses_course_id");
-
-                    b.Navigation("Course");
-                });
-
             modelBuilder.Entity("LmsProject.Models.Student", b =>
                 {
                     b.HasOne("LmsProject.Models.ApplicationUser", "User")
@@ -577,27 +406,6 @@ namespace LmsProject.Migrations
                         .HasConstraintName("fk_students_application_users_user_id");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("LmsProject.Models.StudentCourse", b =>
-                {
-                    b.HasOne("LmsProject.Models.Course", "Course")
-                        .WithMany("StudentCourses")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_student_courses_courses_course_id");
-
-                    b.HasOne("LmsProject.Models.Student", "Student")
-                        .WithMany("StudentCourses")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_student_courses_students_student_id");
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("LmsProject.Models.Teacher", b =>
@@ -667,16 +475,6 @@ namespace LmsProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
-                });
-
-            modelBuilder.Entity("LmsProject.Models.Course", b =>
-                {
-                    b.Navigation("StudentCourses");
-                });
-
-            modelBuilder.Entity("LmsProject.Models.Student", b =>
-                {
-                    b.Navigation("StudentCourses");
                 });
 #pragma warning restore 612, 618
         }

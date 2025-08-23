@@ -20,23 +20,41 @@ namespace LmsProject.Data.Seeder
                 }
             }
             // Seed a default Admin user
-            var adminUserName = "Admin1";
-            var adminEmail = "admin@example.com";
-            var adminPassword = "Admin@123";
+            var seedUsers = new List<ApplicationUserSeedModel>
+{
+                // Admins
+                new ApplicationUserSeedModel { UserName = "admin@example.com", Email = "admin@example.com", Password = "Admin123!", Role = "Admin" },
+                new ApplicationUserSeedModel { UserName = "admin2@example.com", Email = "admin2@example.com", Password = "Admin123!", Role = "Admin" },
+                new ApplicationUserSeedModel { UserName = "admin3@example.com", Email = "admin3@example.com", Password = "Admin123!", Role = "Admin" },
 
-            var adminUser = await userManager.FindByEmailAsync(adminEmail);
-            if (adminUser == null)
+                // Teachers
+                new ApplicationUserSeedModel { UserName = "teacher1@example.com", Email = "teacher1@example.com", Password = "Teacher123!", Role = "Teacher" },
+                new ApplicationUserSeedModel { UserName = "teacher2@example.com", Email = "teacher2@example.com", Password = "Teacher123!", Role = "Teacher" },
+                new ApplicationUserSeedModel { UserName = "teacher3@example.com", Email = "teacher3@example.com", Password = "Teacher123!", Role = "Teacher" },
+
+                // Students
+                new ApplicationUserSeedModel { UserName = "student1@example.com", Email = "student1@example.com", Password = "Student123!", Role = "Student" },
+                new ApplicationUserSeedModel { UserName = "student2@example.com", Email = "student2@example.com", Password = "Student123!", Role = "Student" },
+                new ApplicationUserSeedModel { UserName = "student3@example.com", Email = "student3@example.com", Password = "Student123!", Role = "Student" },
+            };
+
+            foreach (var userData in seedUsers)
             {
-                var newAdmin = new ApplicationUser
+                var existingUser = await userManager.FindByEmailAsync(userData.Email);
+                if (existingUser == null)
                 {
-                    UserName = adminUserName,
-                    Email = adminEmail,
-                };
+                    var newUser = new ApplicationUser
+                    {
+                        UserName = userData.UserName,
+                        Email = userData.Email,
+                        EmailConfirmed = true,
+                    };
 
-                var result = await userManager.CreateAsync(newAdmin, adminPassword);
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(newAdmin, "Admin");
+                    var result = await userManager.CreateAsync(newUser, userData.Password);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(newUser, userData.Role);
+                    }
                 }
             }
         }

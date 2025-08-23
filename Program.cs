@@ -1,6 +1,7 @@
 using LmsProject.Data;
 using LmsProject.Data.Seeder;
 using LmsProject.Models;
+using LmsProject.Models.Dtos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddAutoMapper(cfg => { }, typeof(CourseProfile), typeof(ModuleProfile));
 
 builder.Services.AddAuthorization(options =>
 {

@@ -1,0 +1,145 @@
+﻿@model LmsProject.Areas.Student.Models.EnrolledCourse
+
+@{
+    ViewData["Title"] = "My Courses";
+    int index = 1;
+}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    a {
+        text-decoration: none;
+        color: black;
+    }
+
+    .course-card {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .course-thumbnail {
+        height: 150px;
+        background-color: #f6c453;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .course-category {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: #198754;
+        color: white;
+        font-size: 0.8rem;
+        padding: 3px 8px;
+        border-radius: 5px;
+    }
+
+    .course-footer {
+        margin-top: auto;
+        display: flex;
+        justify-content: flex-end;
+        gap: 5px;
+    }
+
+        .course-footer a {
+            text-decoration: none;
+        }
+
+    .add-new-card {
+        border: 2px dashed #ccc;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: border-color 0.3s, color 0.3s;
+        height: 100%;
+        border-radius: 10px;
+    }
+
+        .add-new-card:hover {
+            border-color: #0d6efd;
+            color: #0d6efd;
+        }
+
+        .add-new-card .plus {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+</style>
+
+
+<h2>My Courses</h2>
+<div class="py-4 shadow p-4" style="border-radius: 5px;">
+
+    <h5 class="fw-bold mb-4 pb-4" style="width:100%; border-bottom: 1px solid lightgray; color: #333;">Course Overview</h5>
+    <!-- Filters -->
+    <div class="row g-2 mb-4">
+        <div class="col-md-2 col-6">
+            <select class="form-select">
+                <option>All</option>
+                <option>General Education</option>
+                <option>Major</option>
+            </select>
+        </div>
+        <div class="col-md-4 col-6">
+            <input type="text" class="form-control" placeholder="Search">
+        </div>
+        <div class="col-md-3 col-6">
+            <select class="form-select">
+                <option>Sort by course name</option>
+                <option>Sort by progress</option>
+            </select>
+        </div>
+        <div class="col-md-3 col-6">
+            <select class="form-select">
+                <option>Card</option>
+                <option>List</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Course card -->
+    <div class="row">
+        @foreach (var course in Model.Courses)
+        {
+            <div class="col-md-4 mb-3">
+
+                <a asp-action="Index" asp-controller="Course" asp-route-id="@course.Id">
+                    <div class="course-card position-relative bg-white">
+                        <div class="course-thumbnail">
+                            <span class="course-category">General Education</span>
+                        </div>
+                        <div class="p-3">
+                            <h6 class="text-truncate mb-1">@course.Title</h6>
+                            <div class="progress mt-2" style="height: 6px;">
+                                <div class="progress-bar" style="width: 0%;"></div>
+                            </div>
+                            <small class="text-muted">0% complete</small>
+
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        }
+    </div>
+
+    <!-- Show filter -->
+    <div class="mt-3">
+        <label>Show</label>
+        <select class="form-select d-inline-block w-auto">
+            <option>All</option>
+            <option>Completed</option>
+            <option>In progress</option>
+        </select>
+    </div>
+</div>

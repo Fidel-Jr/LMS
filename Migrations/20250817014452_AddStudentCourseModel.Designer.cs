@@ -3,6 +3,7 @@ using System;
 using LmsProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LmsProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250817014452_AddStudentCourseModel")]
+    partial class AddStudentCourseModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,44 +59,6 @@ namespace LmsProject.Migrations
                         .HasDatabaseName("ix_courses_teacher_id");
 
                     b.ToTable("courses", (string)null);
-                });
-
-            modelBuilder.Entity("LmsProject.Models.EnrollmentRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("integer")
-                        .HasColumnName("course_id");
-
-                    b.Property<DateTime>("RequestDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("request_date");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("integer")
-                        .HasColumnName("student_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_enrollment_requests");
-
-                    b.HasIndex("CourseId")
-                        .HasDatabaseName("ix_enrollment_requests_course_id");
-
-                    b.HasIndex("StudentId")
-                        .HasDatabaseName("ix_enrollment_requests_student_id");
-
-                    b.ToTable("enrollment_requests", (string)null);
                 });
 
             modelBuilder.Entity("LmsProject.Models.Module", b =>
@@ -532,27 +497,6 @@ namespace LmsProject.Migrations
                         .HasConstraintName("fk_courses_teachers_teacher_id");
 
                     b.Navigation("Teacher");
-                });
-
-            modelBuilder.Entity("LmsProject.Models.EnrollmentRequest", b =>
-                {
-                    b.HasOne("LmsProject.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_enrollment_requests_courses_course_id");
-
-                    b.HasOne("LmsProject.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_enrollment_requests_students_student_id");
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("LmsProject.Models.Module", b =>

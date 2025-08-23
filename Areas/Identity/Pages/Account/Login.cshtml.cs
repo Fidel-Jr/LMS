@@ -21,12 +21,14 @@ namespace LmsProject.Areas.Identity.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, UserManager<ApplicationUser> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -116,6 +118,22 @@ namespace LmsProject.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+
+                    // Get roles for this user
+                    var roles = await _userManager.GetRolesAsync(user);
+
+                    // Redirect based on role
+                    if (roles.Contains("Admin"))
+                        return RedirectToAction("Index", "User", new { area = "Admin" });
+
+                    if (roles.Contains("Teacher"))
+                        return RedirectToAction("Index", "User", new { area = "Teacher" });
+
+                    if (roles.Contains("Student"))
+                        return RedirectToAction("Index", "User", new { area = "Student" });
+
+                    // If no role matched, go to default
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

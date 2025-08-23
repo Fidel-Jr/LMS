@@ -30,12 +30,15 @@ namespace LmsProject.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
+
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
+            RoleManager<IdentityRole> roleManager,
             IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -44,6 +47,7 @@ namespace LmsProject.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -98,6 +102,10 @@ namespace LmsProject.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            [Display(Name = "Select Role")]
+            public string Role { get; set; }  // New property
         }
 
 
@@ -122,6 +130,13 @@ namespace LmsProject.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    if (!await _roleManager.RoleExistsAsync(Input.Role))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole(Input.Role));
+                    }
+
+                    await _userManager.AddToRoleAsync(user, Input.Role);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
