@@ -18,7 +18,7 @@ The goal is to provide a platform where teachers can manage courses and modules,
 ---
 
 ## 🛠️ Tech Stack
-- **Backend:** ASP.NET Core 9 / C#
+- **Backend:** ASP.NET Core 9 MVC / C#
 - **Database:** POSTGRESQL (via EF Core)
 - **Frontend:** Razor Pages + Bootstrap
 - **Auth:** ASP.NET Identity
