@@ -1,12 +1,34 @@
-# ASP.NET Core Identity with Role-Based Authorization
+# 📚 Learning Management System (LMS)
 
-A starter project demonstrating **ASP.NET Core Identity** setup with basic **role-based access control** and **seeding** for roles like `Admin`, `Teacher`, and `Student`.
+> ⚠️ This project is still in development. Features and structure may change as work continues.  
+
+A **Learning Management System** built with **ASP.NET Core** and **Entity Framework Core**.  
+The goal is to provide a platform where teachers can manage courses and modules, and students can enroll in and access learning materials.
 
 ---
 
-## ✅ Features
+## 🚧 Current Progress
+- [x] Course and module creation (basic)
+- [x] Student enrollment requests
+- [ ] Teacher approval/rejection of enrollments
+- [ ] Uploading learning materials (PDFs, videos, links)
+- [ ] Quizzes and assessments
+- [ ] Admin dashboard
 
-- ASP.NET Core Identity (`ApplicationUser` model)
-- Role-based authorization policies
-- Role seeding on application startup
-- Entity Framework Core with PostgreSQL
+---
+
+## 🛠️ Tech Stack
+- **Backend:** ASP.NET Core 9 / C#
+- **Database:** POSTGRESQL (via EF Core)
+- **Frontend:** Razor Pages + Bootstrap
+- **Auth:** ASP.NET Identity
+- **Version Control:** Git + GitHub
+
+---
+
+## ⚡ Getting Started (Development Setup)
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Fidel-Jr/LMS.git
+   cd LMS/LmsProject
