@@ -38,24 +38,18 @@ namespace LmsProject.Areas.Teacher.Controllers
         public IActionResult Index(int id)
         {
             var course = _context.Courses
-                .Include(c => c.Teacher)
-                .FirstOrDefault(c => c.Id == id);
-
-            var modules = _context.Modules
-                .Where(m => m.CourseId == id)
-                .ToList();
+                        .Include(c => c.Modules)
+                            .ThenInclude(m => m.Materials)
+                        .FirstOrDefault(c => c.Id == id);
 
             var enrollmentRequests = _context.EnrollmentRequests
                 .Where(er => er.CourseId == id && er.Status == "Pending").Include(er=>er.Student)
                                                                          .ThenInclude(Student => Student.User)
                                                                          .ToList();
-
             return View(new CourseModuleMaterial
             {
                 Course = course!,
-                Modules = modules,
                 EnrollmentRequest = enrollmentRequests
-
             });
         }
         
@@ -75,7 +69,7 @@ namespace LmsProject.Areas.Teacher.Controllers
                 course.TeacherId = teacherId;
                 _context.Add(course);
                 await _context.SaveChangesAsync();  
-                return RedirectToAction("Index", "User");
+                return RedirectToAction("Index", "Course");
             }
             return View(courseDto);
         }
@@ -99,37 +93,45 @@ namespace LmsProject.Areas.Teacher.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id, [Bind("Title, Description, EnrollmentCount")] CourseDTO courseDto)
         {
-            
-            var teacherId = GetCurrentTeacherId();          
+
             var course = await _context.Courses.FindAsync(id);
-
-            _mapper.Map(courseDto, course); // Efficient mapping
-
-            if (ModelState.IsValid)
+            if (course is null)
             {
-                _context.Update(course);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "User");
+                return NotFound();
             }
-            return View(course);
+
+            if (!ModelState.IsValid)
+            {
+                return View(course);
+            }
+
+            _mapper.Map(courseDto, course);
+            _context.Courses.Update(course);
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "User");
         }
 
         public async Task<IActionResult> AcceptEnrollment(int id)
         {
             var enrollmentRequest = await _context.EnrollmentRequests.FindAsync(id);
-            
-            var student = enrollmentRequest!.StudentId;
-            var course = enrollmentRequest.CourseId;
+
+            if(enrollmentRequest is null)
+            {
+                return NotFound();
+            }
 
             enrollmentRequest.Status = "Accepted";
+
             _context.Update(enrollmentRequest);
             await _context.SaveChangesAsync();
 
             var studentCourse = new StudentCourse
             {
-                StudentId = student,
-                CourseId = course
+                StudentId = enrollmentRequest!.StudentId,
+                CourseId = enrollmentRequest.CourseId
             };
+
             _context.StudentCourses.Add(studentCourse);
             await _context.SaveChangesAsync();
 

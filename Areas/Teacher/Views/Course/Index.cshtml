@@ -3,30 +3,38 @@
     ViewData["Title"] = Model.Course.Title;
 }
 
-<h2>@Model.Course.Title</h2>
-<div class="py-4 shadow p-4" style="border-radius: 5px;">
+<div class="container mt-5">
+    <h2>@Model.Course.Title</h2>
+    <div class="py-4 shadow p-4" style="border-radius: 5px;">
 
-    <div class="accordion" id="lessonAccordion">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingGeneral">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGeneral" aria-expanded="true" aria-controls="collapseGeneral">
-                    General
-                </button>
-            </h2>
-            <div id="collapseGeneral" class="accordion-collapse collapse show" aria-labelledby="headingGeneral" data-bs-parent="#lessonAccordion">
-                <div class="accordion-body">
-                    <a asp-action="Create" asp-controller="Material" asp-route-id="@Model.Course.Id" class="btn btn-primary mt-3">+ New Material</a>
-                </div>  
+        <div class="accordion" id="lessonAccordion">
+            <!-- General Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingGeneral">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGeneral" aria-expanded="true" aria-controls="collapseGeneral">
+                        General
+                    </button>
+                </h2>
+                <div id="collapseGeneral" class="accordion-collapse collapse show" aria-labelledby="headingGeneral" data-bs-parent="#lessonAccordion">
+                    <div class="accordion-body">
+                        <li class="d-flex align-items-center justify-content-between border rounded p-2 mt-2 mb-4">
+                            <div>
+                                <i class="bi bi-file-earmark-word"></i>
+                                <a href="~/uploads/e748b840-8b21-4f51-99f2-cb1b3d0e2a1c.pdf" target="_blank">Syllables.pdf</a>
+                            </div>
+                        </li>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        @if (Model.Modules != null && Model.Modules.Any())
-        {
-            var index = 1;
-            foreach (var module in Model.Modules)
+            <!-- Course Modules -->
+            @if (Model.Course.Modules != null && Model.Course.Modules.Any())
             {
-                var headingId = $"headingLesson{index}";
-                var collapseId = $"collapseLesson{index}";
+                var index = 1;
+                foreach (var module in Model.Course.Modules)
+                {
+                    var headingId = $"headingLesson{index}";
+                    var collapseId = $"collapseLesson{index}";
 
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="@headingId">
@@ -36,46 +44,84 @@
                         </h2>
                         <div id="@collapseId" class="accordion-collapse collapse" aria-labelledby="@headingId" data-bs-parent="#lessonAccordion">
                             <div class="accordion-body">
-                                @* <div class="accordion" id="materialAccordion-@index">
-                                    <!-- Example Material -->
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingMaterial-@index-1">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMaterial-@index-1" aria-expanded="false" aria-controls="collapseMaterial-@index-1">
-                                                Learning Material 1.1: What is Programming?
-                                            </button>
-                                        </h2>
-                                        <div id="collapseMaterial-@index-1" class="accordion-collapse collapse" aria-labelledby="headingMaterial-@index-1" data-bs-parent="#materialAccordion-@index">
-                                            <div class="accordion-body">
-                                                <p><strong>Content:</strong> Programming is the process of creating instructions for a computer to perform tasks...</p>
-                                                <a href="/files/lesson1-material1.pdf" download class="btn btn-sm btn-primary mt-2">
-                                                    📥 Download PDF
-                                                </a>
+
+                                <!-- Materials inside this Module -->
+                                @if (module.Materials != null && module.Materials.Any())
+                                {
+                                    foreach (var material in module.Materials)
+                                    {
+                                        <li class="d-flex align-items-center justify-content-between border rounded p-2 mt-2 mb-4">
+                                            <div>
+                                                <i class="bi bi-file-earmark-word"></i>
+                                                @if (!string.IsNullOrEmpty(material.FileUploadPath))
+                                                {
+                                                    <a href="@Url.Content(material.FileUploadPath)" target="_blank">@material.Title@material.FileExtension</a>
+                                                }
+                                                else if (!string.IsNullOrEmpty(material.ExternalLink))
+                                                {
+                                                    <a href="@material.ExternalLink" target="_blank">@material.Title</a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="fw-bold">@material.Title</span>
+                                                    <h5 class="p-0 m-0 mt-4">No contents uploaded yet.</h5>
+                                                }
+                                                <br />
+                                                <small class="text-muted">Uploaded @material.UploadedAt.ToString("dd/MM/yy, HH:mm")</small>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <a asp-action="Create" asp-controller="Material" asp-route-id="@module.Id" class="btn btn-primary mt-3">+ New Material</a>
-                                </div> *@
+                                            <button class="btn btn-sm btn-outline-success">Mark as done</button>
+                                        </li>
+                                        <!-- Content -->
+                                        @if (!string.IsNullOrEmpty(material.Content))
+                                        {
+                                            <p>
+                                                <strong>Notes:</strong> @material.Content
+                                            </p>
+                                        }
+
+                                        <!-- External link -->
+                                        @if (!string.IsNullOrEmpty(material.ExternalLink))
+                                        {
+                                            <p>
+                                                <strong>Link:</strong>
+                                                <a href="@material.ExternalLink" target="_blank">@material.ExternalLink</a>
+                                            </p>
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+                                    <p class="text-muted">No materials uploaded yet.</p>
+                                }
+
+                                <!-- Add Material Button -->
+                                <a asp-action="Create" asp-controller="Material" asp-route-id="@module.Id" class="btn btn-primary mt-3">+ New Material</a>
                             </div>
                         </div>
                     </div>
 
-                index++;
+                    index++;
+                }
             }
-        }
-        <a asp-action="Create" asp-controller="Module" asp-route-id="@Model.Course.Id" class="btn btn-primary mt-3">+ Add New Lesson</a>
 
-</div>
+            <!-- Add New Module -->
+            <a asp-action="Create" asp-controller="Module" asp-route-id="@Model.Course.Id" class="btn btn-primary mt-3">+ Add New Lesson</a>
+        </div>
+    </div>
 
-@if (Model.EnrollmentRequest != null)
-{
+    <!-- Enrollment Requests -->
+    @if (Model.EnrollmentRequest != null)
+    {
         <div class="mt-5">
+            <h3>Enrollment Requests</h3>
             @foreach (var request in Model.EnrollmentRequest)
             {
-                <div class="d-flex justify-content-lg-between align-items-center mb-3">
+                <div class="d-flex justify-content-lg-between align-items-center mb-3 mt-4">
                     <div class="d-flex align-items-center">
                         <div style="border: 1px solid black; border-radius: 50%; width: 50px; height: 50px;"></div>
                         <div class="ms-3">
-                            <h5 class="mb-0">@request.Student.User.FirstName</h5>
+                            <h5 class="mb-0">@request.Student.User.Email</h5>
                         </div>
                     </div>
                     <div>
@@ -84,4 +130,5 @@
                 </div>
             }
         </div>
-}
+    }
+</div>

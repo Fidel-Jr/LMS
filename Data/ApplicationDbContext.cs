@@ -17,6 +17,11 @@ public class ApplicationDbContext : IdentityDbContext
             ic.StudentId,
             ic.CourseId
         });
+        modelBuilder.Entity<ModuleMaterial>().HasKey(ic => new
+        {
+            ic.ModuleId,
+            ic.MaterialId
+        });
         modelBuilder.Entity<StudentCourse>()
            .HasOne(sc => sc.Student)
            .WithMany(s => s.StudentCourses)
@@ -26,6 +31,14 @@ public class ApplicationDbContext : IdentityDbContext
             .HasOne(sc => sc.Course)
             .WithMany(c => c.StudentCourses)
             .HasForeignKey(sc => sc.CourseId);
+        modelBuilder.Entity<ModuleMaterial>()
+           .HasOne(m => m.Module)
+           .WithMany(mm => mm.ModuleMaterials)
+           .HasForeignKey(sc => sc.ModuleId);
+        modelBuilder.Entity<ModuleMaterial>()
+           .HasOne(m => m.Material)
+           .WithMany(mm => mm.ModuleMaterials)
+           .HasForeignKey(m => m.MaterialId);
         // Many to Many Foreign Key Creation
         modelBuilder.Entity<Teacher>().HasData(
             new Teacher { Id = 1, UserId = "75cf164f-e9e0-4772-9b06-f87a31405c57", Description = "English Teacher" },
@@ -47,4 +60,6 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Module> Modules { get; set; }
     public DbSet<StudentCourse> StudentCourses { get; set; }
     public DbSet<EnrollmentRequest> EnrollmentRequests { get; set; }
+    public DbSet<Material> Materials { get; set; }
+    public DbSet<ModuleMaterial> ModuleMaterials { get; set; }
 }

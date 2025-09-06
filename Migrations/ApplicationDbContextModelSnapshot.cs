@@ -96,6 +96,52 @@ namespace LmsProject.Migrations
                     b.ToTable("enrollment_requests", (string)null);
                 });
 
+            modelBuilder.Entity("LmsProject.Models.Material", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<string>("ExternalLink")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("external_link");
+
+                    b.Property<string>("FileUploadPath")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("file_upload_path");
+
+                    b.Property<int>("ModuleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("module_id");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("uploaded_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_materials");
+
+                    b.HasIndex("ModuleId")
+                        .HasDatabaseName("ix_materials_module_id");
+
+                    b.ToTable("materials", (string)null);
+                });
+
             modelBuilder.Entity("LmsProject.Models.Module", b =>
                 {
                     b.Property<int>("Id")
@@ -126,6 +172,25 @@ namespace LmsProject.Migrations
                         .HasDatabaseName("ix_modules_course_id");
 
                     b.ToTable("modules", (string)null);
+                });
+
+            modelBuilder.Entity("LmsProject.Models.ModuleMaterial", b =>
+                {
+                    b.Property<int>("ModuleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("module_id");
+
+                    b.Property<int>("MaterialId")
+                        .HasColumnType("integer")
+                        .HasColumnName("material_id");
+
+                    b.HasKey("ModuleId", "MaterialId")
+                        .HasName("pk_module_materials");
+
+                    b.HasIndex("MaterialId")
+                        .HasDatabaseName("ix_module_materials_material_id");
+
+                    b.ToTable("module_materials", (string)null);
                 });
 
             modelBuilder.Entity("LmsProject.Models.Student", b =>
@@ -555,6 +620,18 @@ namespace LmsProject.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("LmsProject.Models.Material", b =>
+                {
+                    b.HasOne("LmsProject.Models.Module", "Module")
+                        .WithMany()
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_materials_modules_module_id");
+
+                    b.Navigation("Module");
+                });
+
             modelBuilder.Entity("LmsProject.Models.Module", b =>
                 {
                     b.HasOne("LmsProject.Models.Course", "Course")
@@ -565,6 +642,27 @@ namespace LmsProject.Migrations
                         .HasConstraintName("fk_modules_courses_course_id");
 
                     b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("LmsProject.Models.ModuleMaterial", b =>
+                {
+                    b.HasOne("LmsProject.Models.Material", "Material")
+                        .WithMany("ModuleMaterials")
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_module_materials_materials_material_id");
+
+                    b.HasOne("LmsProject.Models.Module", "Module")
+                        .WithMany("ModuleMaterials")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_module_materials_modules_module_id");
+
+                    b.Navigation("Material");
+
+                    b.Navigation("Module");
                 });
 
             modelBuilder.Entity("LmsProject.Models.Student", b =>
@@ -672,6 +770,16 @@ namespace LmsProject.Migrations
             modelBuilder.Entity("LmsProject.Models.Course", b =>
                 {
                     b.Navigation("StudentCourses");
+                });
+
+            modelBuilder.Entity("LmsProject.Models.Material", b =>
+                {
+                    b.Navigation("ModuleMaterials");
+                });
+
+            modelBuilder.Entity("LmsProject.Models.Module", b =>
+                {
+                    b.Navigation("ModuleMaterials");
                 });
 
             modelBuilder.Entity("LmsProject.Models.Student", b =>

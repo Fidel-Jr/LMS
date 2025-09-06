@@ -5,32 +5,35 @@
 @{
     ViewData["Title"] = "Manage Course";
 }
-<h3>My Current Courses</h3>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Title</th>
-            <th scope="col">Description</th>
-            <th scope="col">Number of Students Enrolled</th>
-            <th scope="col">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach(var course in Model)
-        {
+<div class="container mt-5">
+    <h3>My Current Courses</h3>
+    <table class="table">
+        <thead>
             <tr>
-                <th scope="row">@course.Id</th>
-                <td>@course.Title</td>
-                <td>@course.Description</td>
-                <td>@course.EnrollmentCount</td>
-                <td>
-                    <a asp-action="Index" asp-controller="Course" asp-route-id="@course.Id" class="btn btn-primary">View</a>
-                    <a asp-action="Edit" asp-controller="Course" asp-route-id="@course.Id" class="btn btn-secondary">Edit</a>
-                    <form asp-action="Delete" asp-controller="Course" asp-route-id="@course.Id" method="post" style="display:inline;">
-                        @* <button type="submit" class="btn btn-danger">Delete</button> *@
-					</form>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Number of Students Enrolled</th>
+                <th scope="col">Action</th>
             </tr>
-		}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var course in Model)
+            {
+                <tr>
+                    <th scope="row">@course.Id</th>
+                    <td>@course.Title</td>
+                    <td>@course.Description</td>
+                    <td>@course.EnrollmentCount</td>
+                    <td>
+                        <a asp-action="Index" asp-controller="Course" asp-route-id="@course.Id" class="btn btn-primary">View</a>
+                        <a asp-action="Edit" asp-controller="Course" asp-route-id="@course.Id" class="btn btn-secondary">Edit</a>
+                        <form asp-action="Delete" asp-controller="Course" asp-route-id="@course.Id" method="post" style="display:inline;">
+                            @* <button type="submit" class="btn btn-danger">Delete</button> *@
+                        </form>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

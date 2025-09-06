@@ -57,7 +57,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapStaticAssets();
-
+app.UseStaticFiles();
 
 app.MapControllerRoute(
     name: "areas",

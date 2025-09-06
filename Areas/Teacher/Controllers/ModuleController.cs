@@ -58,19 +58,20 @@ namespace LmsProject.Areas.Teacher.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(int id, [Bind("Title, Description")] ModuleDTO moduleDto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var teacherId = GetCurrentTeacherId(); // returns int (default 0 if not found);
-                var course = await _context.Courses.FindAsync(id);
-                if (course == null || course.TeacherId != teacherId)
-                {
-                    return Forbid(); // prevent creating in another teacher’s course
-                }
-                var module = _mapper.Map<Module>(moduleDto);
-                module.CourseId = course!.Id; // Set the CourseId from the course
-                _context.Add(module);
-                await _context.SaveChangesAsync();
+               return View(moduleDto);
             }
+            var teacherId = GetCurrentTeacherId(); // returns int (default 0 if not found);
+            var course = await _context.Courses.FindAsync(id);
+            if (course == null || course.TeacherId != teacherId)
+            {
+                return Forbid(); // prevent creating in another teacher’s course
+            }
+            var module = _mapper.Map<Module>(moduleDto);
+            module.CourseId = course!.Id; // Set the CourseId from the course
+            _context.Add(module);
+            await _context.SaveChangesAsync();
             return RedirectToAction("Index", "User");
         }
         public async Task<IActionResult> Edit(int id)
@@ -82,16 +83,17 @@ namespace LmsProject.Areas.Teacher.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id, [Bind("Title, Description, EnrollmentCount")] ModuleDTO moduleDto)
         {
+            if (!ModelState.IsValid)
+            {
+               return View(moduleDto);
+            }
             var module = await _context.Modules.FindAsync(id);
             if (module != null)
             {
-                _mapper.Map(moduleDto, module); // Efficient mapping
-                if (ModelState.IsValid)
-                {
-                    _context.Update(module);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Manage", "Module");
-                }
+                _mapper.Map(moduleDto, module); // Efficient mapping using AutoMapper
+                _context.Update(module);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Manage", "Module");
             }
             
             return View(module);

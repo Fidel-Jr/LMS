@@ -10,52 +10,62 @@
     <link rel="stylesheet" href="~/LmsProject.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3" style="background-color: #bf0003">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"> <strong style="color: #ffb700;">UM</strong>indanao</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        @* <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li> *@
-                        
-                        @if (User.IsInRole("Teacher"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Teacher" asp-controller="User" asp-action="Index">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Teacher" asp-controller="Course" asp-action="Manage">Courses</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Teacher" asp-controller="Module" asp-action="Manage">Modules</a>
-                            </li>
-                        }
-                        @if(User.IsInRole("Student"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Student" asp-controller="Course" asp-action="AllCourses">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Student" asp-controller="User" asp-action="Index">My Courses</a>
-                            </li>
-						}
-                    </ul>
-                    <partial name="_LoginPartial" />
+    @{
+        var area = (string)ViewContext.RouteData.Values["area"] ?? "";
+        var page = (string)ViewContext.RouteData.Values["page"] ?? "";
+    }
+
+    @if (!(area == "Identity" && page.Equals("/Account/Login", StringComparison.OrdinalIgnoreCase)))
+    {
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow" style="background-color: #bf0003">
+                <div class="container-fluid">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                        <strong style="color: #ffb700;">LMS</strong>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+                            @* <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            </li> *@
+                            @if (User.IsInRole("Teacher"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="Teacher" asp-controller="User" asp-action="Index">Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="Teacher" asp-controller="Course" asp-action="Manage">Courses</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="Teacher" asp-controller="Module" asp-action="Manage">Modules</a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Student"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="Student" asp-controller="Course" asp-action="AllCourses">Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-light" asp-area="Student" asp-controller="User" asp-action="Index">My Courses</a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Register">Manage Account</a>
+                            }
+                        </ul>
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3"> 
+            </nav>
+        </header>
+    }
+    <div class="">
+        <main role="main" class=""> 
             @RenderBody()
         </main>
     </div>

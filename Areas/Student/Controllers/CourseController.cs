@@ -40,22 +40,23 @@ namespace LmsProject.Areas.Student.Controllers
         {
             var studentId = GetCurrentStudentId();
 
-            var studentCourseEnrollmentStatus = _context.EnrollmentRequests.Where(er => er.StudentId == studentId && er.CourseId == id)
+            var studentCourseEnrollmentStatus = _context.EnrollmentRequests
+                                                .Where(er => er.StudentId == studentId && er.CourseId == id)
                                                 .Select(er=>er.Status).FirstOrDefault();
-            
-            var courseWithModules = _context.Courses
-                .Where(c => c.Id == id)
-                .Select(c => new CourseModuleMaterial
-                {
-                    Course = c,
-                    Modules = _context.Modules
-                    .Where(m => m.CourseId == c.Id)
-                    .ToList(),
-                    EnrollmentStatus = studentCourseEnrollmentStatus ?? "Not Enrolled"
-                })
-                .FirstOrDefault();
 
-            return View(courseWithModules); // Pass the course data to the view
+            var courseWithModules = _context.Courses
+            .Where(c => c.Id == id)
+            .Include(c => c.Modules)
+                .ThenInclude(m => m.Materials)
+            .Select(c => new CourseModuleMaterial
+            {
+                Course = c,
+                Modules = c.Modules.ToList(),
+                EnrollmentStatus = studentCourseEnrollmentStatus ?? "Not Enrolled"
+            })
+            .FirstOrDefault();
+
+                return View(courseWithModules); // Pass the course data to the view
         }
 
         public IActionResult AllCourses()
@@ -69,40 +70,40 @@ namespace LmsProject.Areas.Student.Controllers
             });
         }
         
-            public async Task<IActionResult> Enroll(int id)
-            {
+        public async Task<IActionResult> Enroll(int id)
+        {
                 
-                var studentId = GetCurrentStudentId();
+            var studentId = GetCurrentStudentId();
 
-                var course = await _context.Courses.FindAsync(id);
-                if (course == null)
-                {
-                    return NotFound(); // course doesn't exist
-                }
-
-                // Check if already enrolled or already requested
-                var existingRequest = await _context.EnrollmentRequests
-                    .FirstOrDefaultAsync(er => er.StudentId == studentId && er.CourseId == id);
-
-                if (existingRequest != null)
-                {
-                    // Option 1: Ignore silently
-                    // Option 2: Redirect with a message
-                    // Option 3: Update status if needed (ex: reset to Pending)
-                    return RedirectToAction("Index", "Course", new { id });
-                }   
-
-                var enrolmentRequest = new EnrollmentRequest
-                {
-                    StudentId = studentId,
-                    CourseId = id,
-                    Status = Pending
-                };
-                _context.EnrollmentRequests.Add(enrolmentRequest);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Course", new { id = id });
-
+            var course = await _context.Courses.FindAsync(id);
+            if (course == null)
+            {
+                return NotFound(); // course doesn't exist
             }
+
+            // Check if already enrolled or already requested
+            var existingRequest = await _context.EnrollmentRequests
+                .FirstOrDefaultAsync(er => er.StudentId == studentId && er.CourseId == id);
+
+            if (existingRequest != null)
+            {
+                // Option 1: Ignore silently
+                // Option 2: Redirect with a message
+                // Option 3: Update status if needed (ex: reset to Pending)
+                return RedirectToAction("Index", "Course", new { id });
+            }   
+
+            var enrolmentRequest = new EnrollmentRequest
+            {
+                StudentId = studentId,
+                CourseId = id,
+                Status = Pending
+            };
+            _context.EnrollmentRequests.Add(enrolmentRequest);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Course", new { id = id });
+
+        }
 
     }
 }

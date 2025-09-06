@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using LmsProject.Data;
 using LmsProject.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LmsProject.Areas.Identity.Pages.Account
 {
+    [Authorize(Policy = "AdminOnly")]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -31,6 +33,7 @@ namespace LmsProject.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _context;
 
 
         public RegisterModel(
@@ -39,7 +42,8 @@ namespace LmsProject.Areas.Identity.Pages.Account
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             RoleManager<IdentityRole> roleManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -48,6 +52,7 @@ namespace LmsProject.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            _context = context;
         }
 
         /// <summary>
@@ -139,6 +144,23 @@ namespace LmsProject.Areas.Identity.Pages.Account
                     await _userManager.AddToRoleAsync(user, Input.Role);
 
                     var userId = await _userManager.GetUserIdAsync(user);
+                    if(Input.Role == "Student")
+                    {
+                        var newStudent = new LmsProject.Models.Student
+                        {
+                            UserId = userId
+                        };
+                        _context.Add(newStudent);
+                        await _context.SaveChangesAsync();
+                    }
+                    if (Input.Role == "Teacher")
+                    {
+                        var newStudent = new LmsProject.Models.Teacher
+                        {
+                            UserId = userId
+                        };
+                    }
+
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(

@@ -76,70 +76,71 @@
 
 </style>
 
+<div class="container mt-5">
+    <h2>My Courses</h2>
+    <div class="py-4 shadow p-4" style="border-radius: 5px;">
 
-<h2>My Courses</h2>
-<div class="py-4 shadow p-4" style="border-radius: 5px;">
-
-    <h5 class="fw-bold mb-4 pb-4" style="width:100%; border-bottom: 1px solid lightgray; color: #333;">Course Overview</h5>
-    <!-- Filters -->
-    <div class="row g-2 mb-4">
-        <div class="col-md-2 col-6">
-            <select class="form-select">
-                <option>All</option>
-                <option>General Education</option>
-                <option>Major</option>
-            </select>
-        </div>
-        <div class="col-md-4 col-6">
-            <input type="text" class="form-control" placeholder="Search">
-        </div>
-        <div class="col-md-3 col-6">
-            <select class="form-select">
-                <option>Sort by course name</option>
-                <option>Sort by progress</option>
-            </select>
-        </div>
-        <div class="col-md-3 col-6">
-            <select class="form-select">
-                <option>Card</option>
-                <option>List</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- Course card -->
-    <div class="row">
-        @foreach (var course in Model.Courses)
-        {
-            <div class="col-md-4 mb-3">
-
-                <a asp-action="Index" asp-controller="Course" asp-route-id="@course.Id">
-                    <div class="course-card position-relative bg-white">
-                        <div class="course-thumbnail">
-                            <span class="course-category">General Education</span>
-                        </div>
-                        <div class="p-3">
-                            <h6 class="text-truncate mb-1">@course.Title</h6>
-                            <div class="progress mt-2" style="height: 6px;">
-                                <div class="progress-bar" style="width: 0%;"></div>
-                            </div>
-                            <small class="text-muted">0% complete</small>
-
-                        </div>
-                    </div>
-                </a>
-
+        <h5 class="fw-bold mb-4 pb-4" style="width:100%; border-bottom: 1px solid lightgray; color: #333;">Course Overview</h5>
+        <!-- Filters -->
+        <div class="row g-2 mb-4">
+            <div class="col-md-2 col-6">
+                <select class="form-select">
+                    <option>All</option>
+                    <option>General Education</option>
+                    <option>Major</option>
+                </select>
             </div>
-        }
-    </div>
+            <div class="col-md-4 col-6">
+                <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <div class="col-md-3 col-6">
+                <select class="form-select">
+                    <option>Sort by course name</option>
+                    <option>Sort by progress</option>
+                </select>
+            </div>
+            <div class="col-md-3 col-6">
+                <select class="form-select">
+                    <option>Card</option>
+                    <option>List</option>
+                </select>
+            </div>
+        </div>
 
-    <!-- Show filter -->
-    <div class="mt-3">
-        <label>Show</label>
-        <select class="form-select d-inline-block w-auto">
-            <option>All</option>
-            <option>Completed</option>
-            <option>In progress</option>
-        </select>
+        <!-- Course card -->
+        <div class="row">
+            @foreach (var course in Model.Courses)
+            {
+                <div class="col-md-4 mb-3">
+
+                    <a asp-action="Index" asp-controller="Course" asp-route-id="@course.Id">
+                        <div class="course-card position-relative bg-white">
+                            <div class="course-thumbnail">
+                                <span class="course-category">General Education</span>
+                            </div>
+                            <div class="p-3">
+                                <h6 class="text-truncate mb-1">@course.Title</h6>
+                                <div class="progress mt-2" style="height: 6px;">
+                                    <div class="progress-bar" style="width: 0%;"></div>
+                                </div>
+                                <small class="text-muted">0% complete</small>
+
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+            }
+        </div>
+
+        <!-- Show filter -->
+        <div class="mt-3">
+            <label>Show</label>
+            <select class="form-select d-inline-block w-auto">
+                <option>All</option>
+                <option>Completed</option>
+                <option>In progress</option>
+            </select>
+        </div>
     </div>
 </div>
