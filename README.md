@@ -11,7 +11,7 @@ The goal is to provide a platform where teachers can manage courses and modules,
 - [x] Course and module creation (basic)
 - [x] Student enrollment requests
 - [ ] Teacher approval/rejection of enrollments
-- [ ] Uploading learning materials (PDFs, videos, links)
+- [x] Uploading learning materials (PDFs, videos, links)
 - [ ] Quizzes and assessments
 - [ ] Admin dashboard
 
